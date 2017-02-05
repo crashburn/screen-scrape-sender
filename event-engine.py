@@ -1,16 +1,12 @@
-# author: oskar.blom@gmail.com
-#
-# Make sure your gevent version is >= 1.0
 import gevent
 from gevent.wsgi import WSGIServer
 from gevent.queue import Queue
 
-from flask import Flask, Response
+from flask import Flask, Response, request
 
 import time
 
 
-# SSE "protocol" is described here: http://mzl.la/UPFyxY
 class ServerSentEvent(object):
 
     def __init__(self, data):
@@ -66,9 +62,12 @@ def debug():
 
 @app.route("/publish")
 def publish():
-    #Dummy data - pick up from request for real data
+    reqmsg = request.args.get('msg')
+    if reqmsg is None:
+        reqmsg = ''
+
     def notify():
-        msg = str(time.time())
+        msg = str(time.time()) + ' | ' + reqmsg
         for sub in subscriptions[:]:
             sub.put(msg)
 
@@ -84,9 +83,10 @@ def subscribe():
         try:
             while True:
                 result = q.get()
-                ev = ServerSentEvent(str(result))
+                print result
+                ev = ServerSentEvent(unicode(result))
                 yield ev.encode()
-        except GeneratorExit: # Or maybe use flask signals
+        except GeneratorExit:
             subscriptions.remove(q)
 
     return Response(gen(), mimetype="text/event-stream")
@@ -96,4 +96,4 @@ if __name__ == "__main__":
     server = WSGIServer(("", 5000), app)
     server.serve_forever()
     # Then visit http://localhost:5000 to subscribe
-    # and send messages by visiting http://localhost:5000/publish
+    # and send messages by visiting http://localhost:5000/publish?msg=<your message>

@@ -1,0 +1,6 @@
+javascript:(function() {
+  msg = 'Title: ' + document.querySelector('h1[itemprop=name]').textContent + '\n' +
+        'Rating: ' + document.querySelector('meta[itemprop=contentRating]').content + '\n' +
+        'Director: ' + document.querySelector('span[itemprop=director]').textContent;
+  document.body.appendChild(document.createElement('img')).src='http://127.0.0.1:5000/publish?msg=' + msg;
+})();
