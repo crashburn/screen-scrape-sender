@@ -50,13 +50,13 @@ the `publish` endpoint of event engine application.  Data is passed in the
 query string.
 
 To install the bookmarklet in Chrome:
-1. right-click on the bookmark bar in Chrome (you may need to enable the
+  1. right-click on the bookmark bar in Chrome (you may need to enable the
   bookmark bar in settings)
-1. Choose `add page`
-1. Give the bookmarklet any name you want, such as `IMDb scraper`
-1. Paste the entire contents of `imdb_bookmarklet` into the "URL" field of
+  1. Choose `add page`
+  1. Give the bookmarklet any name you want, such as `IMDb scraper`
+  1. Paste the entire contents of `imdb_bookmarklet` into the "URL" field of
   the bookmark
-1. Save the bookmark
+  1. Save the bookmark
 
 # Sending events
 Once you have the bookmarklet installed and the event engine running, open
