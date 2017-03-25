@@ -1,7 +1,13 @@
 javascript:(function() {
+  var creditCardAmt;
+  $("#modal input[ng-model='item.amount']").each(function(id, el) {
+    var lineItemDesc = $(el).parent().next()[0];
+    if(lineItemDesc.innerText === 'Credit Card') {
+      creditCardAmt = el.value;
+    }
+  });
   msg = {
-    'Title' : document.querySelector('h1[itemprop=name]').textContent,
-    'Rating' : document.querySelector('meta[itemprop=contentRating]').content
+    'amount' : creditCardAmt
   };
   srcurl = 'http://127.0.0.1:5000/publish?msg=' + JSON.stringify(msg);
   document.body.appendChild(document.createElement('img')).src=srcurl;

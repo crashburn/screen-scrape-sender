@@ -1,6 +1,7 @@
 import gevent
 from gevent.wsgi import WSGIServer
 from gevent.queue import Queue
+from gevent import pywsgi
 
 from flask import Flask, Response, request
 
@@ -38,19 +39,96 @@ def index():
        <head>
        </head>
        <body>
-         <h1>Server sent events</h1>
-         <div id="event"></div>
-         <script type="text/javascript">
+        <div style="vertical-align:middle">
+            <div id="welcome">
+                Welcome to Skill!
+                <br>
+            </div>
+            <div id="error">
+                <span id="errMsg"></span>
+                <br>
+                <button onclick="goHome()">OK</button>
+            </div>
+            <div id="pay" style="display: none;">
+                <span>Amount Due:</span> $ <span id="amount"></span>
+                <br>
+                <button onclick="payNow()">Pay Now</button>
+            </div>
+        </div>
+        <script type="text/javascript">
 
-         var eventOutputContainer = document.getElementById("event");
-         var evtSrc = new EventSource("/subscribe");
+        var strAmount = '';
+        var intAmount = 0;
+        var evtSrc = new EventSource("/subscribe");
 
-         evtSrc.onmessage = function(e) {
-             console.log(e.data);
-             eventOutputContainer.innerHTML = e.data;
-         };
+        evtSrc.onmessage = function(e) {
+            console.log(e.data);
+            strAmount = JSON.parse(e.data).amount
+            intAmount = Math.round(strAmount * 100);
+            document.getElementById("amount").innerHTML = strAmount;
+            show(false, true, false);
+        };
 
-         </script>
+        var errorDesc = getUrlParameter('com.squareup.register.ERROR_DESCRIPTION');
+        if(errorDesc) {
+            document.getElementById("errMsg").innerHTML = errorDesc;
+            show(false, false, true);
+        }
+        else {
+            show(true, false, false);
+        }
+
+        function show(welcome, pay, error) {
+            document.getElementById("welcome").style.display = (welcome ? 'block' : 'none');
+            document.getElementById("pay").style.display = (pay ? 'block' : 'none');
+            document.getElementById("error").style.display = (error ? 'block' : 'none');
+        }
+
+        function payNow() {
+            window.location = "intent:#Intent;" +
+                "action=com.squareup.register.action.CHARGE;" +
+                "package=com.squareup;" +
+                "S.browser_fallback_url=https://192.168.4.69:5000;" +
+                "S.com.squareup.register.WEB_CALLBACK_URI=https://192.168.4.69:5000;" +
+                "S.com.squareup.register.CLIENT_ID=sq0idp-SN6X3UAclY2ZjF7PWfK2LQ;" +
+                "S.com.squareup.register.API_VERSION=v1.3;" +
+                "i.com.squareup.register.TOTAL_AMOUNT=" + intAmount +
+                ";S.com.squareup.register.CURRENCY_CODE=USD;" +
+                "S.com.squareup.register.TENDER_TYPES=com.squareup.register.TENDER_CARD;end";
+        }
+
+        function goHome() {
+            window.location = "/";
+        }
+
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        };
+
+        </script>
+        <style>
+            body {
+                font-size: 30px;
+                font-family: Helvetica
+            }
+            div {
+                height: 200px;
+                line-height: 200px;
+                text-align: center;
+                color: #89213a;
+            }
+            button {
+                color: white;
+                background-color: #89213a;
+                border: 0;
+                height: 50px;
+                width: 200px;
+                font-size: 20px;
+            }
+        </style>
        </body>
      </html>
     """
@@ -67,9 +145,8 @@ def publish():
         reqmsg = ''
 
     def notify():
-        msg = str(time.time()) + ' | ' + reqmsg
         for sub in subscriptions[:]:
-            sub.put(msg)
+            sub.put(reqmsg)
 
     gevent.spawn(notify)
 
@@ -93,7 +170,7 @@ def subscribe():
 
 if __name__ == "__main__":
     app.debug = True
-    server = WSGIServer(("", 5000), app)
+    server = pywsgi.WSGIServer(('', 5000), app, keyfile='server.key', certfile='server.crt')
     server.serve_forever()
-    # Then visit http://localhost:5000 to subscribe
-    # and send messages by visiting http://localhost:5000/publish?msg=<your message>
+    # Then visit https://localhost:5000 to subscribe
+    # and send messages by visiting https://localhost:5000/publish?msg=<your message>
