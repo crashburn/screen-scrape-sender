@@ -36,6 +36,20 @@ then finally run the application
 ```
 python event-engine.py
 ```
+To run the application in the background (so you can close the terminal) use nohup.  
+Process output such as HTTP request logging will go to a file called nohup.out.
+```
+nohup python event-engine.py &
+```
+To later find and stop the background process use ps to locate the pid and then kill <pid>
+```
+ps ax | grep event-engine.py
+
+21104 pts/1    Sl+    0:00 python event-engine.py
+21182 pts/2    S+     0:00 grep --color=auto event-engine.py
+
+kill 21104
+``` 
 
 # Bookmarklet
 Bookmarklets are little snippets of javascript code that you can save as a

@@ -43,6 +43,7 @@ def index():
             <div id="welcome">
                 Welcome to Skill!
                 <br>
+                <img src="https://placeholdit.imgix.net/~text?txtsize=25&txt=Replace%20With%20Your%20Logo&w=180&h=120">
             </div>
             <div id="error">
                 <span id="errMsg"></span>
