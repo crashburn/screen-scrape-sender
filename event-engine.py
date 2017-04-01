@@ -54,10 +54,12 @@ def index():
                 <span>Amount Due:</span> $ <span id="amount"></span>
                 <br>
                 <button onclick="payNow()">Pay Now</button>
+                <button onclick="goHome()">Cancel</button>
             </div>
         </div>
         <script type="text/javascript">
 
+        var timeoutID;
         var strAmount = '';
         var intAmount = 0;
         var evtSrc = new EventSource("/subscribe");
@@ -68,12 +70,14 @@ def index():
             intAmount = Math.round(strAmount * 100);
             document.getElementById("amount").innerHTML = strAmount;
             show(false, true, false);
+            timeoutID = window.setTimeout(goHome, 60000);
         };
 
         var errorDesc = getUrlParameter('com.squareup.register.ERROR_DESCRIPTION');
         if(errorDesc) {
             document.getElementById("errMsg").innerHTML = errorDesc;
             show(false, false, true);
+            timeoutID = window.setTimeout(goHome, 60000);
         }
         else {
             show(true, false, false);
@@ -86,6 +90,7 @@ def index():
         }
 
         function payNow() {
+            window.clearTimeout(timeoutID);
             window.location = "intent:#Intent;" +
                 "action=com.squareup.register.action.CHARGE;" +
                 "package=com.squareup;" +
@@ -99,6 +104,7 @@ def index():
         }
 
         function goHome() {
+            window.clearTimeout(timeoutID);
             window.location = "/";
         }
 
