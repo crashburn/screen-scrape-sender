@@ -2,9 +2,9 @@
 This is a python project, so make sure you have python installed.  Python
 should be pre-installed if you are using a Mac or Linux.  Windows does not
 have it by default.  Open a command window and type `python --version` to
-confirm.  This project is confirmed to work with version 2.7.12.
+check.  This project is confirmed to work with version 2.7.12.
 
-If you don't already have it, install the pip package manager.  The way to
+If you don't already have the pip package manage installed, install it.  The way to
 do this varies based on the platform.  On Linux Mint I used
 ```
 sudo apt-get install python-pip
@@ -32,7 +32,7 @@ Each time you are going to work on the project first run virutalenv:
 ```
 . venv/bin/activate
 ```
-then finally run the application
+To run the application for development:
 ```
 python event-engine.py
 ```
