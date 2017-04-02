@@ -91,16 +91,32 @@ def index():
 
         function payNow() {
             window.clearTimeout(timeoutID);
-            window.location = "intent:#Intent;" +
-                "action=com.squareup.register.action.CHARGE;" +
-                "package=com.squareup;" +
-                "S.browser_fallback_url=https://192.168.4.69:5000;" +
-                "S.com.squareup.register.WEB_CALLBACK_URI=https://192.168.4.69:5000;" +
-                "S.com.squareup.register.CLIENT_ID=sq0idp-SN6X3UAclY2ZjF7PWfK2LQ;" +
-                "S.com.squareup.register.API_VERSION=v1.3;" +
-                "i.com.squareup.register.TOTAL_AMOUNT=" + intAmount +
-                ";S.com.squareup.register.CURRENCY_CODE=USD;" +
-                "S.com.squareup.register.TENDER_TYPES=com.squareup.register.TENDER_CARD;end";
+//            window.location = "intent:#Intent;" +
+//                "action=com.squareup.register.action.CHARGE;" +
+//                "package=com.squareup;" +
+//                "S.browser_fallback_url=https://192.168.4.69:5000;" +
+//                "S.com.squareup.register.WEB_CALLBACK_URI=https://192.168.4.69:5000;" +
+//                "S.com.squareup.register.CLIENT_ID=sq0idp-SN6X3UAclY2ZjF7PWfK2LQ;" +
+//                "S.com.squareup.register.API_VERSION=v1.3;" +
+//                "i.com.squareup.register.TOTAL_AMOUNT=" + intAmount +
+//                ";S.com.squareup.register.CURRENCY_CODE=USD;" +
+//                "S.com.squareup.register.TENDER_TYPES=com.squareup.register.TENDER_CARD;end";
+
+            var dataParameter = {
+                "amount_money": {
+                  "amount" : intAmount,
+                  "currency_code" : "USD"
+                },
+                "callback_url" : "https://192.168.4.69:5000",
+                "client_id": "sq0idp-SN6X3UAclY2ZjF7PWfK2LQ",
+                "version": "1.2",
+                "notes": "",
+                "options" : {
+                  "supported_tender_types" : ["CREDIT_CARD"]
+                }
+            };
+            window.location = "square-commerce-v1://payment/create?data=" + encodeURIComponent(JSON.stringify(dataParameter));
+
         }
 
         function goHome() {
